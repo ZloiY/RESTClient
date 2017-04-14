@@ -3,9 +3,6 @@ package sample.window_process;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.sun.istack.internal.Nullable;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
@@ -20,6 +17,8 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import org.glassfish.jersey.client.ClientResponse;
+import org.glassfish.jersey.client.JerseyWebTarget;
 import sample.Adapter;
 import sample.Main;
 import sample.PatternGroup;
@@ -27,6 +26,9 @@ import sample.PatternModel;
 
 import javax.imageio.ImageIO;
 import javax.sound.midi.Soundbank;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
@@ -202,9 +204,9 @@ public class MainWindowPane {
                         searchModel.setName(searchField.getText());
                         searchModel.setGroup(patternsMap.get(patternsGroups.getValue()));
                         PatternsLists findList = new PatternsLists();
-                        WebResource resource = client.resource(Main.CLIENT_URL).path("name/" + searchModel.getName());
-                        ClientResponse response = resource.type(MediaType.APPLICATION_JSON).get(ClientResponse.class);
-                        String searchRes = response.getEntity(String.class);
+                        WebTarget resource = client.target(Main.CLIENT_URL).path("name/" + searchModel.getName());
+                        String searchRes= resource.request(MediaType.APPLICATION_JSON).get(String.class);
+//                        String searchRes = (String)response.getEntity();
                         System.out.println(searchRes);
                         findList.setPatternsLists(gson.fromJson(searchRes, listType));
                         leftBox.getChildren().clear();
@@ -254,9 +256,9 @@ public class MainWindowPane {
                         e.printStackTrace();
                     }
                 }
-                 WebResource resource = client.resource(Main.CLIENT_URL);
+                 WebTarget resource = client.target(Main.CLIENT_URL);
                  String jsonStr = gson.toJson(newPattern);
-                 ClientResponse response = resource.type(MediaType.APPLICATION_JSON).post(ClientResponse.class,jsonStr);
+                resource.request(MediaType.APPLICATION_JSON).post(Entity.entity(jsonStr,MediaType.WILDCARD_TYPE));
                  addWindow.blankWindow();
                  refreshPatternLists();
                 //new Alert(Alert.AlertType.ERROR,"Service is offline try again latter.").show();
@@ -273,9 +275,9 @@ public class MainWindowPane {
         PatternModel pattern = new PatternModel();
         if (patternGroup !=  null)
             pattern.setGroup(patternGroup.getValue());
-            WebResource resource = client.resource(Main.CLIENT_URL).path("group/"+pattern.getGroup());
-            ClientResponse response = resource.type(MediaType.APPLICATION_JSON).get(ClientResponse.class);
-            return gson.fromJson(response.getEntity(String.class),listType);
+            WebTarget resource = client.target(Main.CLIENT_URL).path("group/"+pattern.getGroup());
+            String requestRes = resource.request(MediaType.APPLICATION_JSON).get(String.class);
+            return gson.fromJson(requestRes,listType);
             //new Alert(Alert.AlertType.ERROR,"Service is offline try again later.").show();
     }
 
@@ -355,12 +357,12 @@ public class MainWindowPane {
                             ioException.printStackTrace();
                         }
                     }
-                    WebResource resource =client.resource(Main.CLIENT_URL);
+                    WebTarget resource =client.target(Main.CLIENT_URL);
                     List<PatternModel> patternReplace = new ArrayList<>();
                     patternReplace.add(oldPattern);
                     patternReplace.add(newPattern);
                     String replaceString = gson.toJson(patternReplace, listType);
-                    ClientResponse response = resource.type(MediaType.APPLICATION_JSON).put(ClientResponse.class, replaceString);
+                    resource.request(MediaType.APPLICATION_JSON).put(Entity.entity(replaceString,MediaType.WILDCARD_TYPE));
                     Window newWindow = new Window(newPattern);
                     newWindow.showLayout();
                     newWindow.getDelBtn().setOnAction(setDelEvent(newWindow));
@@ -384,8 +386,8 @@ public class MainWindowPane {
             public void handle(ActionEvent event) {
                 PatternModel deletePattern = new PatternModel();
                 deletePattern.setId(window.getPatternID());
-                WebResource resource = client.resource(Main.CLIENT_URL).path(String.valueOf(deletePattern.getId()));
-                ClientResponse response = resource.type(MediaType.APPLICATION_JSON).delete(ClientResponse.class);
+                WebTarget resource = client.target(Main.CLIENT_URL).path(String.valueOf(deletePattern.getId()));
+               resource.request(MediaType.APPLICATION_JSON).delete();
                 //new Alert(Alert.AlertType.ERROR, "Service is offline try again later.").show();
                 if (PatternGroup.findByValue(patternsMap.get(patternsGroups.getValue())) != null)
                 switch (PatternGroup.findByValue(patternsMap.get(patternsGroups.getValue()))){

@@ -1,12 +1,13 @@
 package sample;
 
-import com.sun.jersey.api.client.Client;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import sample.window_process.MainWindowPane;
 
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
 import java.util.Map;
 
 /**
@@ -28,7 +29,7 @@ public class Main extends Application {
         Parameters parameters = getParameters();
         Map<String, String> namedParametrs =  parameters.getNamed();
         CLIENT_URL = namedParametrs.get("URL");
-        Client  client = Client.create();
+        Client client = ClientBuilder.newClient();
        MainWindowPane mainWindowPanePane = new MainWindowPane(mainPane,client);
         Scene scene = new Scene(mainPane, 610, 400);
         primaryStage.setTitle("Client connect to "+namedParametrs.get("URL"));
