@@ -204,10 +204,10 @@ public class MainWindowPane {
                         searchModel.setName(searchField.getText());
                         searchModel.setGroup(patternsMap.get(patternsGroups.getValue()));
                         PatternsLists findList = new PatternsLists();
-                        WebTarget resource = client.target(Main.CLIENT_URL).path("name/" + searchModel.getName());
+                        String jSon = gson.toJson(searchModel);
+                        String neJSon = jSon.substring(1,jSon.length()-1);
+                        WebTarget resource = client.target(Main.CLIENT_URL).path("/get").queryParam("pattern" ,neJSon);
                         String searchRes= resource.request(MediaType.APPLICATION_JSON).get(String.class);
-//                        String searchRes = (String)response.getEntity();
-                        System.out.println(searchRes);
                         findList.setPatternsLists(gson.fromJson(searchRes, listType));
                         leftBox.getChildren().clear();
                         leftBox.getChildren().addAll(patternsGroups, findList.getPatternsView(), addPatternBtn);
@@ -275,7 +275,9 @@ public class MainWindowPane {
         PatternModel pattern = new PatternModel();
         if (patternGroup !=  null)
             pattern.setGroup(patternGroup.getValue());
-            WebTarget resource = client.target(Main.CLIENT_URL).path("group/"+pattern.getGroup());
+            String json = gson.toJson(pattern);
+            String neJson = json.substring(1,json.length()-1);
+            WebTarget resource = client.target(Main.CLIENT_URL).path("get").queryParam("pattern",neJson);
             String requestRes = resource.request(MediaType.APPLICATION_JSON).get(String.class);
             return gson.fromJson(requestRes,listType);
             //new Alert(Alert.AlertType.ERROR,"Service is offline try again later.").show();
