@@ -1,24 +1,37 @@
 package sample;
 
 /**
- * Created by ZloiY on 06.04.17.
+ * Класс хранящий в себе группы паттернов
+ * MV_PATTERNS - MV-паттерны;
+ * STRUCT_PATTERNS - структурные паттерны;
+ * CREAT_PATTERNS - порождающие паттерны;
+ * BEHAVE_PATTERNS - поведенческие паттерны.
  */
 public enum PatternGroup {
-        MV_PATTERNS(1),
-        STRUCT_PATTERNS(2),
-        CREAT_PATTERNS(3),
-        BEHAVE_PATTERNS(4);
+    MV_PATTERNS(1),
+    STRUCT_PATTERNS(2),
+    CREAT_PATTERNS(3),
+    BEHAVE_PATTERNS(4);
 
-        private final int value;
+    private final int value;
 
-        private PatternGroup(int value) {
-            this.value = value;
-        }
+    private PatternGroup(int value) {
+        this.value = value;
+    }
 
-        public int getValue() {
-            return value;
-        }
+    /**
+     * Возвращает id текущей группы
+     * @return id
+     */
+    public int getValue() {
+        return value;
+    }
 
+    /**
+     * Возвращает PatternGroup
+     * @param value id группы паттерна
+     * @return PatternGroup
+     */
     public static PatternGroup findByValue(int value) {
         switch (value) {
             case 1:

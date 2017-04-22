@@ -3,13 +3,28 @@ package sample;
 import java.nio.ByteBuffer;
 
 /**
- * Created by ZloiY on 06.04.17.
+ * Модель паттерна
  */
 public class PatternModel {
+    /**
+     * id паттерна в базе данных
+     */
     private int id;
+    /**
+     * Название паттерна
+     */
     private String name;
+    /**
+     * Описание паттерна
+     */
     private String description;
+    /**
+     * Изображение паттерна
+     */
     private byte[] image;
+    /**
+     * Группа паттерна
+     */
     private int group;
 
     public PatternModel(){}
@@ -42,7 +57,9 @@ public class PatternModel {
         return image;
     }
 
-    public void setImage(byte[] image) { this.image = image; }
+    public void setImage(byte[] image) {
+        this.image = image;
+    }
 
     public int getGroup() {
         return group;
@@ -54,6 +71,8 @@ public class PatternModel {
 
     @Override
     public String toString() {
-        return id + " " +name + " " + description + " " +group+"\n";
+        if (image == null)
+            return id + " " +name + " " + description + " " +group+"\n";
+        else return id+" "+name+" "+description+" "+group+" "+"with image"+"\n";
     }
 }
